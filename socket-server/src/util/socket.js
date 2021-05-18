@@ -1,5 +1,5 @@
 import http, { request } from 'http'
-import { Server } from socket.io
+import { Server } from 'socket.io'
 export default class SocketServer {
     // #io membro privado
     #io
@@ -8,7 +8,6 @@ export default class SocketServer {
     }
 
     async start() {
-        const server 
             // for default my route is private
             const server = http.createServer((request, response) => {
                 // now i'm turning my request public
@@ -27,6 +26,16 @@ export default class SocketServer {
                 }
             })
 
+            // just validating if my front end it's working
+           const room =  this.#io.of('/room')
+           room.on('connection', socket => {
+            socket.emit('userConnection', 'socket id se conectou' + socket.id)
+
+            socket.on('joinRoom', (dados) => {
+                console.log('dados recebidos', dados)
+            })
+        })
+
             // here i'm creating a socket server for my front end access
             return new Promise((resolve, reject) => {
                 server.on('error', reject)
@@ -35,4 +44,3 @@ export default class SocketServer {
             })
         }
     }
-}
